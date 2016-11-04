@@ -1,0 +1,1 @@
+{"port":4000,"rootPath":"/Users/mayconmellos/dev/test","staticsPath":"public","publicPath":"/static/","entry":"./test.js","schema":{"entry":"./src/data/schema","watch":"./src/data"}}

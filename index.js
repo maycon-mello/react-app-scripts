@@ -1,99 +1,47 @@
-require('babel-register')({
-  "presets": [
-    "react",
-    "es2015",
-    "stage-0"
-  ]
-});
-const nodeExternals = require('webpack-node-externals');
-const express = require( 'express');
-const path = require( 'path');
-const webpack = require( 'webpack');
-const WebpackDevServer = require( 'webpack-dev-server');
-const fs = require('fs');
-const updateSchema = require('./tools/updateSchema');
+var spawn = require('cross-spawn');
+const exec = require('child_process').exec;
+const fs = require('fs')
+// switch (script) {
+// case 'build':
+// case 'eject':
+// case 'start':
+// case 'test':
 
-function getDevCompiler({ port, entry, rootPath, publicPath, staticsPath }) {
-  global.buildRootPath = rootPath;
-  return webpack({
-    entry: [
-      'react-hot-loader/patch',
-      'webpack-dev-server/client?http://localhost:' + port,
-      'webpack/hot/dev-server',
-      path.join(rootPath, entry),
-    ],
-    module: {
-      loaders: [
-        {
-          exclude: [
-            /node_modules/,
-          ],
-          loader: 'babel',
-          test: /\.js$/,
-          babelrc: false,
-          query: {
-            "passPerPreset": true,
-            "presets": [
-              { "plugins": [path.join(__dirname, "/tools/babelRelayPlugin")] },
-              "react",
-              "es2015",
-              "stage-0"
-            ],
-            "plugins": [
-              "react-hot-loader/babel"
-            ]
-          },
-        },
-        {
-          loaders: ['style-loader', 'css-loader'],
-          test: /\.css$/,
-        },
-      ],
-    },
-    output: {
-      path: path.join(rootPath, staticsPath),
-      filename: 'bundle.js',
-      publicPath
-    },
-    plugins: [
-     new webpack.HotModuleReplacementPlugin()
-   ]
-  });
+// let args = 'serve';
+// 
+// console.log("ooo");
+// function runServe() {
+//   console.log(__dirname)
+//   process.chdir(__dirname);
+//   exec('node scripts', (error, stdout, stderr) => {
+//     console.log(stdout);
+//     console.log(stderr);
+//   });
+
+// }
+function runServe() {
+  process.chdir(__dirname);
+  console.log('node ' + require.resolve('./scripts'));
+  const result = spawn.sync(
+    'node',
+    [require.resolve('./scripts')].concat(' serve'),
+    {stdio: 'inherit'}
+  );
+  process.exit(result.status);
 }
 
-function getPath(root, p) {
-  return path.resolve(root, p);
-}
-
-function serve({ port, entry, rootPath, publicPath, staticsPath, schema }) {
-  let compiler = getDevCompiler({ port, entry, rootPath, publicPath, staticsPath })
-  let app = new WebpackDevServer(compiler, {
-    publicPath, // javascript path
-    hot: true,
-    historyApiFallback: true,
-    stats: {
-      colors: true,
-      assets: false,
-      chunks: false
-    }
-  });
-
-  // Serve static resources
-  app.use('/', express.static(path.resolve(rootPath, staticsPath)));
-  app.listen(port, () => {
-    console.log(`App is now running on http://localhost:${port}`);
-    updateSchema
-  });
-
-  let watchPath = getPath(rootPath, schema.watch);
-
-  updateSchema(getPath(rootPath, schema.entry));
-
-  fs.watch(watchPath, {encoding: 'buffer'}, (eventType, filename) => {
-    console.log(eventType, filename);
-  });
+function writeConfig(config, callback) {
+  fs.writeFile(__dirname + '/config.tmp.json', JSON.stringify(config), callback);
 }
 
 module.exports = {
-  serve,
+  serve(config) {
+    writeConfig(config, runServe)
+  }
 }
+//   break;
+// default:
+//   console.log('Unknown script "' + script + '".');
+//   console.log('Perhaps you need to update react-scripts?');
+//   break;
+// }
