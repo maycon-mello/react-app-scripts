@@ -1,1 +1,1 @@
-{"port":4000,"rootPath":"/Users/mayconmellos/dev/test","staticsPath":"public","publicPath":"/static/","entry":"./test.js","schema":{"entry":"./src/data/schema","watch":"./src/data"}}
+{"port":3000,"rootPath":"/home/maycon/dev/dev/relay-starter-kit-plus","staticsPath":"public","publicPath":"/static/","entry":"./src/index.js","appSrc":"./src","schema":{"entry":"./src/data/schema","json":"./src/data/schema.json","graphql":"./src/data/schema.graphql","watch":"./src/data"}}

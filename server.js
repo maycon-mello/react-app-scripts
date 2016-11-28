@@ -13,9 +13,9 @@ const WebpackDevServer = require( 'webpack-dev-server');
 const fs = require('fs');
 const updateSchema = require('./tools/updateSchema');
 
-function getDevCompiler({ port, entry, rootPath, publicPath, staticsPath }) {
+function getDevCompiler({ port, entry, appSrc, rootPath, publicPath, staticsPath }) {
   global.buildRootPath = rootPath;
-  
+
   return webpack({
     entry: [
       'react-hot-loader/patch',
@@ -23,19 +23,31 @@ function getDevCompiler({ port, entry, rootPath, publicPath, staticsPath }) {
       'webpack/hot/dev-server',
       path.join(rootPath, entry),
     ],
+    resolveLoader: {
+      root: path.join(__dirname, '/node_modules'),
+      moduleTemplates: ['*-loader']
+    },
     module: {
       loaders: [
         {
-          exclude: [
-            /node_modules/,
-          ],
+          test: /\.(js|jsx)$/,
+          include: path.join(rootPath, appSrc),
           loader: 'babel',
-          test: /\.js$/,
-          babelrc: false,
           query: {
-            //"passPerPreset": true,
-            cacheDirectory: true,
-            presets: ['es2015', 'react']
+            babelrc: false,
+            passPerPreset: true,
+            presets: [
+              {
+                plugins: [
+                  require.resolve('./tools/babelRelayPlugin')
+                ],
+              },
+              require.resolve('babel-preset-react-app'),
+              require.resolve('babel-preset-stage-0'),
+            ],
+            plugins: [
+              require.resolve('react-hot-loader/babel')
+            ],
           },
         },
         {
@@ -59,32 +71,29 @@ function getPath(root, p) {
   return path.resolve(root, p);
 }
 
-function serve({ port, entry, rootPath, publicPath, staticsPath, schema }) {
-  let compiler = getDevCompiler({ port, entry, rootPath, publicPath, staticsPath })
-  
-  process.chdir(rootPath);
-  
-  let app = new WebpackDevServer(compiler, {
-    publicPath, // javascript path
-    hot: true,
-    historyApiFallback: true,
-    stats: {
-      colors: true,
-      assets: false,
-      chunks: false
-    }
-  });
+function serve({ port, entry, appSrc, rootPath, publicPath, staticsPath, schema }) {
+  let compiler = getDevCompiler({ port, entry, appSrc, rootPath, publicPath, staticsPath })
+  // let app = new WebpackDevServer(compiler, {
+  //   publicPath, // javascript path
+  //   hot: true,
+  //   historyApiFallback: true,
+  //   stats: {
+  //     colors: true,
+  //     assets: false,
+  //     chunks: false
+  //   }
+  // });
 
-  // Serve static resources
-  app.use('/', express.static(path.resolve(rootPath, staticsPath)));
-  app.listen(port, () => {
-    console.log(`App is now running on http://localhost:${port}`);
-    updateSchema
-  });
+  // // Serve static resources
+  // app.use('/', express.static(path.resolve(rootPath, staticsPath)));
+  // app.listen(port, () => {
+  //   console.log(`App is now running on http://localhost:${port}`);
+  // });
 
   // let watchPath = getPath(rootPath, schema.watch);
-  // 
-  // updateSchema(getPath(rootPath, schema.entry));
+  //
+  //process.cwd(__dirname);
+  updateSchema();
   // 
   // fs.watch(watchPath, {encoding: 'buffer'}, (eventType, filename) => {
   //   console.log(eventType, filename);

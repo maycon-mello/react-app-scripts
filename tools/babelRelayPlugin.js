@@ -6,15 +6,23 @@ let lastSchema = '';
 let adapter;
 let initRef;
 
-const SCHEMA_PATH = './schema.json';
+const config = require('../config.tmp.json');
 
+const updateSchema = require('./updateSchema');
+
+
+  
 function getAdapter() {
-  if (!fs.existsSync(SCHEMA_PATH)) {
+  const schemaPath = path.join(config.rootPath, config.schema.json);
+
+  //updateSchema();
+
+  if (!fs.existsSync(schemaPath)) {
     return null;
   }
 
-  delete require.cache[require.resolve(SCHEMA_PATH)];
-  let schema = require(SCHEMA_PATH);
+  delete require.cache[require.resolve(schemaPath)];
+  let schema = require(schemaPath);
   let schemaString = JSON.stringify(schema.data);
 
   // Verify if json have changed and create a new adapter
