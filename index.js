@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path');
 const scriptsPath = require.resolve('./scripts');
 
-const CONFIG_FILE_PATH = './config.tmp.json';
+const CONFIG_FILE_PATH = '/config.tmp.json';
 
 /**
  * Run the given script
@@ -36,7 +36,9 @@ function resolvePaths(values, rootPath) {
  * @return {Promise}
  */
 function prepareAndRun(config, script) {
-  return writeConfig(config).then(() => run(script));
+  return writeConfig(config)
+    .then(() => run(script))
+    .catch(err => console.log(err));
 }
 
 /**
@@ -52,6 +54,9 @@ function writeConfig(config) {
     const data = JSON.stringify(config);
 
     fs.writeFile(path, data, (err) => {
+      if (err) {
+        reject(err);
+      }
       // TODO: deal permission errors
       resolve();
     });

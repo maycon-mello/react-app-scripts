@@ -38,7 +38,10 @@ module.exports = {
         },
       },
       {
-        loaders: ['style-loader', 'css-loader'],
+        loaders: [
+          require.resolve('style-loader'),
+          require.resolve('css-loader'),
+        ],
         test: /\.css$/,
       },
     ],
