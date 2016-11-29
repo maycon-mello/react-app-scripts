@@ -46,7 +46,8 @@ function createDevServer() {
       colors: true,
       assets: false,
       chunks: false,
-    }
+    },
+    proxy: config.proxy,
   });
 
   // Serve static resources
