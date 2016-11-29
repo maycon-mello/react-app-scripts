@@ -1,47 +1,73 @@
-var spawn = require('cross-spawn');
-const exec = require('child_process').exec;
+const spawn = require('cross-spawn');
 const fs = require('fs')
-// switch (script) {
-// case 'build':
-// case 'eject':
-// case 'start':
-// case 'test':
+const path = require('path');
+const scriptsPath = require.resolve('./scripts');
 
-// let args = 'serve';
-// 
-// console.log("ooo");
-// function runServe() {
-//   console.log(__dirname)
-//   process.chdir(__dirname);
-//   exec('node scripts', (error, stdout, stderr) => {
-//     console.log(stdout);
-//     console.log(stderr);
-//   });
+const CONFIG_FILE_PATH = './config.tmp.json';
 
-// }
-function runServe() {
+/**
+ * Run the given script
+ *
+ */
+function run(script) {
   process.chdir(__dirname);
-  console.log('node ' + require.resolve('./scripts'));
-  const result = spawn.sync(
-    'node',
-    [require.resolve('./scripts')].concat(' serve'),
-    {stdio: 'inherit'}
-  );
+  const params = [scriptsPath].concat(' ' + script);
+  const config = { stdio: 'inherit' }
+  const result = spawn.sync('node', params, config);
   process.exit(result.status);
 }
 
-function writeConfig(config, callback) {
-  fs.writeFile(__dirname + '/config.tmp.json', JSON.stringify(config), callback);
+/**
+ *
+ *
+ */
+function resolvePaths(values, rootPath) {
+  for(var key in values) {
+    if (values[key].indexOf && values[key].indexOf('./') === 0) {
+      values[key] = path.join(rootPath, values[key]);
+    }
+  }
+}
+
+/**
+ * Write the config file and run a script ('serve', 'build', 'test')
+ * @param {Object} config
+ * @param {String} script - some like 'serve', 'build', 'test'
+ * @return {Promise}
+ */
+function prepareAndRun(config, script) {
+  return writeConfig(config).then(() => run(script));
+}
+
+/**
+ * Write the config file on the disk
+ *
+ */
+function writeConfig(config) {
+  resolvePaths(config, config.rootPath);
+  resolvePaths(config.schema, config.rootPath);
+
+  return new Promise((resolve, reject) => {
+    const path = __dirname + CONFIG_FILE_PATH;
+    const data = JSON.stringify(config);
+
+    fs.writeFile(path, data, (err) => {
+      // TODO: deal permission errors
+      resolve();
+    });
+  })
 }
 
 module.exports = {
   serve(config) {
-    writeConfig(config, runServe)
-  }
+    return prepareAndRun(config, 'serve');
+  },
+
+  build(config) {
+    return prepareAndRun(config, 'build');
+  },
+
+  test(config) {
+    return prepareAndRun(config, 'test');
+  },
 }
-//   break;
-// default:
-//   console.log('Unknown script "' + script + '".');
-//   console.log('Perhaps you need to update react-scripts?');
-//   break;
-// }

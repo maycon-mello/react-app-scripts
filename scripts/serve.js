@@ -3,20 +3,42 @@ const express = require( 'express');
 const webpack = require( 'webpack');
 const WebpackDevServer = require( 'webpack-dev-server');
 
-const updateSchema = require('./tools/updateSchema');
-const config = require('./config.tmp.json');
-const webPackDevConfig = require('./webpack/webpack.dev.config.js');
+const updateSchema = require('../tools/updateSchema');
+const config = require('../config.tmp.json');
+const webPackDevConfig = require('../webpack/webpack.dev.config.js');
 
+/**
+ *
+ *
+ */
+function serve() {
+  updateSchema().then(createDevServer);
+}
+
+/**
+ *
+ *
+ */
 function watch() {
+  const shouldSkip = /schema\.(json|graphql)/;
   fs.watch(config.schema.watchPath, { encoding: 'buffer' }, (eventType, filename) => {
-    if (!(/schema\.(json|graphql)/).test(filename.toString())) {
-      updateSchema();
+    const file = filename.toString();
+
+    if (shouldSkip.test(file)) {
+      return;  
     }
+
+    updateSchema();
   });
 }
 
-function run(compiler) {
-  let app = new WebpackDevServer(compiler, {
+/**
+ *
+ *
+ */
+function createDevServer() {
+  const compiler = webpack(webPackDevConfig);
+  const app = new WebpackDevServer(compiler, {
     publicPath: config.publicPath,
     hot: true,
     historyApiFallback: true,
@@ -34,10 +56,4 @@ function run(compiler) {
   });
 }
 
-function serve(config) {
-  let compiler = webpack(webPackDevConfig);
-
-  updateSchema().then(() => run(compiler));
-}
-
-module.exports = serve
+module.exports = serve;

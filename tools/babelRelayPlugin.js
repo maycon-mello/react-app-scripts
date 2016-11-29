@@ -1,21 +1,13 @@
 var fs = require('fs');
-var path = require('path');
 var getbabelRelayPlugin = require('babel-relay-plugin');
+const config = require('../config.tmp.json');
 
 let lastSchema = '';
 let adapter;
 let initRef;
 
-const config = require('../config.tmp.json');
-
-const updateSchema = require('./updateSchema');
-
-
-  
 function getAdapter() {
-  const schemaPath = path.join(config.rootPath, config.schema.json);
-
-  //updateSchema();
+  const schemaPath = config.schema.json;
 
   if (!fs.existsSync(schemaPath)) {
     return null;

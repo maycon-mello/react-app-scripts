@@ -1,34 +1,40 @@
+require('babel-register')({
+  "presets": [
+     require.resolve('babel-preset-es2015'),
+     require.resolve('babel-preset-stage-0'),
+  ],
+});
 
 const fs = require('fs');
 const path = require('path');
-const { graphql }  = require('graphql');
-const { introspectionQuery, printSchema } = require('graphql/utilities');
 const config = require('../config.tmp.json');
+const schemaPath = config.schema.entry;
+const graphqlPath = path.join(config.rootPath, '/node_modules/graphql');
+const graphqlUtilitiesPath = path.join(graphqlPath, '/utilities');
 
 module.exports =  function() {
-  let schemaPath = path.join(config.rootPath, config.schema.entry);
-  //delete require.cache[require.resolve(schemaPath)];
-  var Schema = require(schemaPath).default;
+  delete require.cache[require.resolve(schemaPath)];
+  const Schema = require(schemaPath).default;
+  const { graphql } = require(graphqlPath);
+  const { introspectionQuery, printSchema } = require(graphqlUtilitiesPath);
+
   // Save JSON of full schema introspection for Babel Relay Plugin to use
   return graphql(Schema, introspectionQuery).then(result => {
-
-    console.log(result);
-    return;
     if (result.errors) {
       console.error(
         'ERROR introspecting schema: ',
         JSON.stringify(result.errors, null, 2)
       );
-    } else {
-      fs.writeFileSync(
-        path.join(config.rootPath, config.schema.json),
-        JSON.stringify(result, null, 2)
-      );
+      return result;
     }
-    // Save user readable type system shorthand of schema
-    console.log("write .graphql file");
+
     fs.writeFileSync(
-      path.join(config.rootPath, config.schema.graphql),
+      config.schema.json,
+      JSON.stringify(result, null, 2)
+    );
+
+    fs.writeFileSync(
+      config.schema.graphql,
       printSchema(Schema)
     );
 
