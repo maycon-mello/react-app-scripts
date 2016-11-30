@@ -18,7 +18,7 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         include: config.appSrc,
-        loader: 'babel',
+        loader: require.resolve('babel-loader'),
         query: {
           babelrc: false,
           passPerPreset: true,
@@ -53,5 +53,5 @@ module.exports = {
   },
   plugins: [
    new webpack.HotModuleReplacementPlugin(),
- ]
+  ],
 }
