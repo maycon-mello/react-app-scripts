@@ -1,6 +1,36 @@
 const webpack = require( 'webpack');
 const path = require('path');
 const config = require('../config.tmp.json');
+const HappyPack = require('happypack');
+
+let babelQuery = {
+  babelrc: false,
+  passPerPreset: true,
+  presets: [
+    {
+      plugins: [
+        require.resolve('../tools/babelRelayPlugin')
+      ],
+    },
+    require.resolve('babel-preset-react'),
+    require.resolve('babel-preset-es2015'),
+    require.resolve('babel-preset-stage-0'),
+  ],
+  plugins: [
+    require.resolve('react-hot-loader/babel')
+  ],
+};
+
+const plugins = [
+  new webpack.HotModuleReplacementPlugin(),
+];
+
+if (config.cache) {
+  plugins.push(new HappyPack({
+    loaders: [ 'babel?' + JSON.stringify(babelQuery)],
+  }));
+}
+
 
 module.exports = {
   entry: [
@@ -21,24 +51,8 @@ module.exports = {
           config.appSrc,
           path.resolve(__dirname, '../tmp'),
         ],
-        loader: require.resolve('babel-loader'),
-        query: {
-          babelrc: false,
-          passPerPreset: true,
-          presets: [
-            {
-              plugins: [
-                require.resolve('../tools/babelRelayPlugin')
-              ],
-            },
-            require.resolve('babel-preset-react'),
-            require.resolve('babel-preset-es2015'),
-            require.resolve('babel-preset-stage-0'),
-          ],
-          plugins: [
-            require.resolve('react-hot-loader/babel')
-          ],
-        },
+        loader: config.cache ? require.resolve('happypack/loader') : require.resolve('babel-loader'),
+        query: config.cache ? {} : babelQuery, 
       },
       {
         loaders: [
@@ -54,7 +68,5 @@ module.exports = {
     filename: 'bundle.js',
     publicPath: config.publicPath,
   },
-  plugins: [
-   new webpack.HotModuleReplacementPlugin(),
-  ],
+  plugins,
 }
