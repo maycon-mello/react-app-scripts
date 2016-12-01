@@ -6,7 +6,7 @@ module.exports = {
   entry: [
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://localhost:' + config.port,
-    'webpack/hot/dev-server',
+    (config.reactHot && config.reactHot.entry) || 'webpack/hot/dev-server',
     config.entry,
   ],
   resolveLoader: {
@@ -17,7 +17,10 @@ module.exports = {
     loaders: [
       {
         test: /\.(js|jsx)$/,
-        include: config.appSrc,
+        include: [
+          config.appSrc,
+          path.resolve(__dirname, '../tmp'),
+        ],
         loader: require.resolve('babel-loader'),
         query: {
           babelrc: false,

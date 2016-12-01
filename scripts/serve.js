@@ -49,12 +49,15 @@ function createDevServer() {
     },
     proxy: config.proxy,
   });
+  console.log("Running webpack...");
+
+  compiler.plugin('done', function() {
+    console.log(`--> App is ready and running on http://localhost:${config.port} <--`);
+  });
 
   // Serve static resources
   app.use('/', express.static(config.staticsPath));
-  app.listen(config.port, () => {
-    console.log(`App is now running on http://localhost:${config.port}`);
-  });
+  app.listen(config.port);
 }
 
 module.exports = serve;

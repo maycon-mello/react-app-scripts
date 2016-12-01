@@ -4,13 +4,14 @@ const path = require('path');
 const scriptsPath = require.resolve('./scripts');
 
 const CONFIG_FILE_PATH = '/config.tmp.json';
+const REACT_HOT_ENTRY = '/tools/reactHotEntry.tmpl.js';
+const REACT_HOT_APP = '/tools/reactHotApp.tmpl.js';
 
 /**
  * Run the given script
  *
  */
 function run(script) {
-  process.chdir(__dirname);
   const params = [scriptsPath].concat(' ' + script);
   const config = { stdio: 'inherit' }
   const result = spawn.sync('node', params, config);
@@ -36,7 +37,11 @@ function resolvePaths(values, rootPath) {
  * @return {Promise}
  */
 function prepareAndRun(config, script) {
-  return writeConfig(config)
+  resolvePaths(config, config.rootPath);
+  resolvePaths(config.schema, config.rootPath);
+
+  return reactHotEntry(config)
+    .then(() => writeConfig(config))
     .then(() => run(script))
     .catch(err => console.log(err));
 }
@@ -46,9 +51,6 @@ function prepareAndRun(config, script) {
  *
  */
 function writeConfig(config) {
-  resolvePaths(config, config.rootPath);
-  resolvePaths(config.schema, config.rootPath);
-
   return new Promise((resolve, reject) => {
     const path = __dirname + CONFIG_FILE_PATH;
     const data = JSON.stringify(config);
@@ -57,10 +59,49 @@ function writeConfig(config) {
       if (err) {
         reject(err);
       }
-      // TODO: deal permission errors
+      // TODO: deal with permission errors
       resolve();
     });
   })
+}
+
+function parseTemplate(config, path, replace) {
+  return new Promise(function(resolve, reject) {
+    path = __dirname + path;
+    fs.readFile(path, 'utf-8', (err, data) => {
+      if (err) {
+        reject(err);
+      }
+      data = replace(data, config);
+      path = path.replace(/\.tmpl/, '.tmp').replace(/\/tools\//, '/tmp/');
+      fs.writeFile(path, data, (err) => {
+        if (err) {
+          reject(err);
+        }
+        // TODO: deal with permission errors
+        resolve();
+      });
+    });  
+  });
+}
+
+function reactHotEntry(config) {
+  if (!config.reactHot || !config.reactHot.enabled) {
+    return Promise.resolve(config);
+  }
+  console.log("Creating react hot loader wrapper...");
+
+  return parseTemplate(config, REACT_HOT_ENTRY, function(data, config) {
+      return data
+        .replace(/<%ROOT_PATH%>/g, config.rootPath)
+        .replace(/<%WRAPPER_ID%>/g, config.reactHot.renderWrapperId);
+    })
+    .then(() =>  parseTemplate(config, REACT_HOT_APP, function(data, config) {
+      return data.replace(/<%APP_ENTRY%>/g, config.entry);
+    }))
+    .then(() => {
+      config.entry = __dirname + '/tmp/reactHotEntry.tmp.js'
+    });
 }
 
 module.exports = {
