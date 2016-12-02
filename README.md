@@ -32,6 +32,8 @@ app.serve({
   appSrc: './src',
 });
 
+```
+
 ## React hot loader
 React App Scripts include [React Hot Loader 3](https://github.com/gaearon/react-hot-loader)
 This is disabled by default, see the code below to enable it.
