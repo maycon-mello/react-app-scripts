@@ -1,35 +1,69 @@
 const fs = require('fs');
-const express = require( 'express');
-const webpack = require( 'webpack');
-const WebpackDevServer = require( 'webpack-dev-server');
+const chokidar = require('chokidar');
+const express = require('express');
+const webpack = require('webpack');
+const WebpackDevServer = require('webpack-dev-server');
 
-const updateSchema = require('../tools/updateSchema');
+const Logger = require('../util/logger');
+const updateSchema = require('../util/updateSchema');
 const config = require('../config.tmp.json');
 const webPackDevConfig = require('../webpack/webpack.dev.config.js');
+
+Logger.setDebug(config.debug);
 
 /**
  *
  *
  */
 function serve() {
-  updateSchema().then(createDevServer);
+  return prepareSchema().then(createDevServer);
 }
 
 /**
  *
  *
  */
-function watch() {
-  const shouldSkip = /schema\.(json|graphql)/;
-  fs.watch(config.schema.watchPath, { encoding: 'buffer' }, (eventType, filename) => {
-    const file = filename.toString();
+function prepareSchema() {
+  if (!config.schema) {
+    Logger.debug('No schema found.');
+    return;
+  }
 
-    if (shouldSkip.test(file)) {
+  Logger.debug('Prepare graphql schema.');
+
+  watchSchema()
+
+  return updateSchema();
+}
+
+/**
+ *
+ *
+ */
+function watchSchema() {
+  if (!config.schema.watch) {
+    return;
+  }
+
+  const shouldSkip = /schema\.(json|graphql)/;
+
+  Logger.debug("Watch for schema changes at: ", config.schema.watch);
+
+  const watcher = chokidar.watch(config.schema.watch, {
+    ignored: /[\/\\]\./,
+    persistent: true
+  });
+
+  const update = (path) => {
+    if (shouldSkip.test(path)) {
       return;  
     }
+    updateSchema().then(() => {
+      Logger.debug('Schema successfull udpated.');
+    });
+  };
 
-    updateSchema();
-  });
+  watcher.on('change', update);
 }
 
 /**
@@ -38,6 +72,7 @@ function watch() {
  */
 function createDevServer() {
   const compiler = webpack(webPackDevConfig);
+
   const app = new WebpackDevServer(compiler, {
     publicPath: config.publicPath,
     hot: true,
@@ -49,10 +84,11 @@ function createDevServer() {
     },
     proxy: config.proxy,
   });
-  console.log("Running webpack...");
+
+  Logger.info("Running webpack...");
 
   compiler.plugin('done', function() {
-    console.log(`--> App is ready and running on http://localhost:${config.port} <--`);
+    Logger.info(`--> App is ready and running on http://localhost:${config.port} <--`);
   });
 
   // Serve static resources

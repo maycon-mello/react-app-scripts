@@ -2,6 +2,7 @@ const webpack = require( 'webpack');
 const path = require('path');
 const config = require('../config.tmp.json');
 const HappyPack = require('happypack');
+const Logger = require('../util/logger');
 
 let babelQuery = {
   babelrc: false,
@@ -9,7 +10,7 @@ let babelQuery = {
   presets: [
     {
       plugins: [
-        require.resolve('../tools/babelRelayPlugin')
+        require.resolve('../util/babelRelayPlugin')
       ],
     },
     require.resolve('babel-preset-react'),
@@ -26,6 +27,8 @@ const plugins = [
 ];
 
 if (config.cache) {
+  Logger.debug('Webpack cache enabled.');
+
   plugins.push(new HappyPack({
     loaders: [ 'babel?' + JSON.stringify(babelQuery)],
   }));
@@ -49,7 +52,7 @@ module.exports = {
         test: /\.(js|jsx)$/,
         include: [
           config.appSrc,
-          path.resolve(__dirname, '../tmp'),
+          path.resolve(__dirname, '../lib/reactHot'),
         ],
         loader: config.cache ? require.resolve('happypack/loader') : require.resolve('babel-loader'),
         query: config.cache ? {} : babelQuery, 

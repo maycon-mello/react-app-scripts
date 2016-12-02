@@ -1,6 +1,7 @@
 var fs = require('fs');
 var getbabelRelayPlugin = require('babel-relay-plugin');
 const config = require('../config.tmp.json');
+const Logger = require('./logger');
 
 let lastSchema = '';
 let adapter;
@@ -10,6 +11,7 @@ function getAdapter() {
   const schemaPath = config.schema.json;
 
   if (!fs.existsSync(schemaPath)) {
+    Logger.debug('Schema no\'t found at: ' + schemaPath);
     return null;
   }
 
@@ -19,6 +21,7 @@ function getAdapter() {
 
   // Verify if json have changed and create a new adapter
   if (schemaString !== lastSchema) {
+    Logger.debug('Creating a new adapter...');
     lastSchema = schemaString;
     adapter = getbabelRelayPlugin(schema.data)(initRef);
   }

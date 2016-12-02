@@ -1,3 +1,3 @@
 /node_modules
-config.tmp.json
-/tmp/*.js
+*.tmp.json
+*.tmp.js
