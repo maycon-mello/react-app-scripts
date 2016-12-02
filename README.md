@@ -13,6 +13,38 @@ Babel relay plugin is included to transpile relay queries
  - Relay/GraphQL support
 
 ## Serve React application
+There are two options when running React App Scripts.
+### With CLI
+Create a .scriptsrc:
+```javascript
+{
+  // Global configuration, common to all scripts
+  // Your application entry point
+  "entry": "./src/main.js",
+  // Serve script configuration
+  "serve": {
+    "port": 3000,
+    // Static files to be served by express
+    // Put here your index.html
+    "staticsPath": "./public",
+    // Path to webpack serve the bundle.js file
+    "publicPath": "/build/",
+    // You application source path to watch for file changes
+    "appSrc": "./src"
+  }
+}
+```
+Add the script in on package.json:
+```javascript
+{
+  // Global configuration, common to all scripts
+ "scripts": {
+    "serve": "./node_modules/.bin/react-scripts serve"
+ }
+}
+```
+### With Javascript
+Create a javascript file to call de serve method:
 ```javascript
 const app = require('react-app-scripts');
 
@@ -77,7 +109,7 @@ export default app;
 
 ```
 
-### Serve React/Relay application
+## Serve React/Relay application
 React App Scripts do all the necessary tasks to run Relay applications.
 You just need to inform your schema file and it will do the dirty work for you.
 
@@ -111,7 +143,7 @@ app.serve({
 
 ```
 
-### What should be done yet
+## What should be done yet
  - Write more tests
  - Create build script
  - Create test script
