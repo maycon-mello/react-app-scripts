@@ -1,4 +1,4 @@
-# React app scripts [![npm version](https://badge.fury.io/js/react-app-scripts.svg)](https://badge.fury.io/js/react-app-scripts)
+# React App Scripts [![npm version](https://badge.fury.io/js/react-app-scripts.svg)](https://badge.fury.io/js/react-app-scripts)
 
 Run, build and test react applications.
 
