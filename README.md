@@ -1,5 +1,4 @@
-# React App Scripts [![npm version](https://badge.fury.io/js/react-app-scripts.svg)](https://badge.fury.io/js/react-app-scripts) (https://api.travis-ci.org/maycon-mello/react-app-scripts.svg?branch=master)
-
+# React App Scripts [![npm version](https://badge.fury.io/js/react-app-scripts.svg)](https://badge.fury.io/js/react-app-scripts) [![Build Status](https://api.travis-ci.org/maycon-mello/react-app-scripts.svg?branch=master)](https://travis-ci.org/maycon-mello/react-app-scripts)
 Run, build and test react applications.
 
 ## Relay and GraphQL support
