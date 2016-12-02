@@ -1,6 +1,6 @@
 {
   "name": "react-app-scripts",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Serve, build and test react applications.",
   "main": "index.js",
   "scripts": {
@@ -8,6 +8,9 @@
     "test": "./node_modules/.bin/mocha $(find lib -name '*.spec.js')  --recursive --compilers js:babel-register --require ./test/config.js",
     "build": "babel lib --presets babel-preset-es2015 --out-dir build",
     "prepublish": "npm run build"
+  },
+  "bin": {
+    "react-app-scripts": "./build/cli.js"
   },
   "repository": {
     "type": "git",
