@@ -31,13 +31,12 @@ app.serve({
   // You application source path to watch for file changes
   appSrc: './src',
 });
-```javascript
 
 ## React hot loader
 React App Scripts include [React Hot Loader 3](https://github.com/gaearon/react-hot-loader)
 This is disabled by default, see the code below to enable it.
 
-
+```javascript
 const app = require('react-app-scripts');
 
 app.serve({
@@ -69,7 +68,7 @@ const app = <div>My app<div>
 // React hot loading will automatically render your app inside the renderWrapperId element
 
 /* 
- * You need to export default your app because the entire application
+ * You need to export your app because the entire application
  * will be wrapped by a react loader provider.
  */
 export default app;
