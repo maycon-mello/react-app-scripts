@@ -1,4 +1,5 @@
-# React app scripts
+# React app scripts [![npm version](https://badge.fury.io/js/react-app-scripts.svg)](https://badge.fury.io/js/react-app-scripts)
+
 Run, build and test react applications.
 
 ## Relay and GraphQL support
@@ -6,10 +7,10 @@ Babel relay plugin is included to transpile relay queries
 
 ## What is included on react app scripts?
  - Webpack
- - Webpack dev server
- - Happypack (webpack cache)
- - Babel react and ES6 loaders
- - React Hot Loader 3
+ - Webpack Dev Server
+ - [Happypack](https://github.com/amireh/happypack)
+ - Babel React and ES6 loaders
+ - [React Hot Loader 3](https://github.com/gaearon/react-hot-loader)
  - Relay/GraphQL support
 
 ## Serve React application
@@ -31,12 +32,13 @@ app.serve({
   // You application source path to watch for file changes
   appSrc: './src',
 });
+```javascript
 
 ## React hot loader
 React App Scripts include [React Hot Loader 3](https://github.com/gaearon/react-hot-loader)
 This is disabled by default, see the code below to enable it.
 
-```javascript
+
 const app = require('react-app-scripts');
 
 app.serve({
