@@ -39,7 +39,7 @@ Add the script in on package.json:
 {
   // Global configuration, common to all scripts
  "scripts": {
-    "serve": "./node_modules/.bin/react-scripts serve"
+    "serve": "./node_modules/.bin/react-app-scripts serve"
  }
 }
 ```
@@ -143,9 +143,61 @@ app.serve({
 
 ```
 
+## Build
+Build your application in one js file, applying webpack optimizations on it.
+
+### CLI usage
+
+.scriptsrc:
+
+```javascript
+{
+  "entry": "./src/main.js",
+  "appSrc": "./src",
+  "schema": {
+    "entry": "./src/schema",
+    "json": "./tools/schema/schema.json",
+    "graphql": "./tools/schema/schema.graphql"
+  },
+  "build": {
+    "path": "./",
+    "filename": "dist.min.js"
+  }
+}
+
+```
+
+package.json:
+
+```javascript
+{
+  "build": "./node_modules/.bin/react-app-scripts build"
+}
+
+```
+
+### Javascript usage:
+
+```javascript
+const app = require('react-app-scripts');
+
+app.build({
+  rootPath: __dirname,
+  entry: "./src/main.js",
+  appSrc: "./src",
+  path: "./",
+  filename: "dist.min.js",
+  schema: {
+    entry: "./src/schema",
+    json: "./tools/schema/schema.json",
+    graphql: "./tools/schema/schema.graphql",
+  },
+});
+
+```
+
 ## What should be done yet
  - Write more tests
- - Create build script
  - Create test script
  - Flowtype support
  - GraphQL Server support
