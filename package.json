@@ -1,6 +1,6 @@
 {
   "name": "react-app-scripts",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Serve, build and test react applications.",
   "main": "index.js",
   "scripts": {
