@@ -1,6 +1,6 @@
 {
   "name": "react-app-scripts",
-  "version": "1.0.10",
+  "version": "1.0.14",
   "description": "Serve, build and test react applications.",
   "main": "index.js",
   "scripts": {
@@ -19,10 +19,13 @@
   "author": "@mayconmello",
   "license": "ISC",
   "dependencies": {
+    "autoprefixer": "^6.5.3",
     "babel-cli": "6.5.1",
     "babel-core": "^6.8.0",
     "babel-loader": "6.2.3",
-    "babel-polyfill": "6.5.0",
+    "babel-plugin-react-css-modules": "^1.1.0",
+    "babel-plugin-transform-remove-strict-mode": "0.0.2",
+    "babel-polyfill": "^6.5.0",
     "babel-preset-es2015": "6.5.0",
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-0": "6.5.0",
@@ -32,12 +35,24 @@
     "classnames": "2.2.3",
     "cross-spawn": "^5.0.1",
     "css-loader": "^0.25.0",
+    "css-modules-require-hook": "^4.0.5",
     "express": "4.13.4",
+    "file-loader": "^0.9.0",
     "happypack": "^3.0.0",
+    "json-loader": "^0.5.4",
+    "node-sass": "^3.13.0",
+    "postcss": "^5.2.6",
+    "postcss-loader": "^1.2.0",
+    "react": "^15.4.1",
+    "react-dom": "^15.4.1",
     "react-hot-loader": "^3.0.0-beta.6",
+    "resolve-url": "^0.2.1",
+    "sass-loader": "^4.0.2",
     "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
     "webpack": "1.12.13",
-    "webpack-dev-server": "1.14.1"
+    "webpack-dev-server": "1.14.1",
+    "whatwg-fetch": "^2.0.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
