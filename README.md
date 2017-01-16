@@ -5,12 +5,14 @@ Run, build and test react applications.
 Babel relay plugin is included to transpile relay queries
 
 ## What is included on react app scripts?
- - Webpack
+ - Webpack 2
  - Webpack Dev Server
  - [Happypack](https://github.com/amireh/happypack)
  - Babel React and ES6 loaders
  - [React Hot Loader 3](https://github.com/gaearon/react-hot-loader)
  - Relay/GraphQL support
+ - Flowtype suport
+ - Run tests with Mocha
 
 ## Serve React application
 There are two options when running React App Scripts.
@@ -197,11 +199,7 @@ app.build({
 ```
 
 ## What should be done yet
- - Write more tests
- - Create test script
- - Flowtype support
  - GraphQL Server support
  - GraphiQL client
  - Less, Sass and postcss support
- - Improve Webpack loaders to deal with files
  - Improve Webpack to deal with code spliting and multiple entries
